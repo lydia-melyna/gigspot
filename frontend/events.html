@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GigSpot — Concerts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg:#06080f;--surface:#0d1117;--surface2:#111827;
+      --border:rgba(255,255,255,0.06);
+      --neon:#ff3cac;--neon2:#784ba0;--neon3:#2b86c5;
+      --gold:#ffd166;--green:#06d6a0;--red:#ef476f;
+      --text:#f0f0f0;--muted:#5a6375;
+    }
+    body{min-height:100vh;background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);}
+    body::before{
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);
+    }
+    nav{
+      height:60px;background:rgba(13,17,23,0.95);backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;padding:0 28px;gap:12px;
+      position:sticky;top:0;z-index:100;
+    }
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;
+      background:linear-gradient(90deg,var(--neon),var(--gold));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:auto;}
+    .nav-user{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);}
+    .avatar{
+      width:30px;height:30px;border-radius:50%;
+      background:linear-gradient(135deg,var(--neon),var(--neon2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;color:white;
+    }
+    .nav-tab{
+      padding:6px 14px;border-radius:7px;border:none;
+      background:rgba(255,255,255,0.04);color:var(--muted);
+      font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;
+      transition:all 0.2s;
+    }
+    .nav-tab.active,.nav-tab:hover{background:rgba(255,60,172,0.12);color:var(--neon);}
+    .logout-btn{
+      padding:6px 12px;border-radius:7px;
+      background:rgba(239,71,111,0.08);border:1px solid rgba(239,71,111,0.15);
+      color:var(--red);font-size:12px;cursor:pointer;
+      font-family:'Outfit',sans-serif;transition:background 0.2s;
+    }
+    .logout-btn:hover{background:rgba(239,71,111,0.15);}
+    main{max-width:1140px;margin:0 auto;padding:36px 20px;position:relative;z-index:1;}
+    .hero{
+      background:linear-gradient(135deg,#1a0a2e 0%,#16213e 50%,#0a0a1a 100%);
+      border:1px solid var(--border);border-radius:20px;
+      padding:48px 40px;margin-bottom:36px;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 70% 50%,rgba(255,60,172,0.12) 0%,transparent 60%);
+    }
+    .hero-title{
+      font-family:'Bebas Neue',sans-serif;font-size:52px;
+      letter-spacing:4px;line-height:1;margin-bottom:10px;
+      position:relative;z-index:1;
+    }
+    .hero-title span{
+      background:linear-gradient(90deg,var(--neon),var(--gold),var(--neon3));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .hero-sub{font-size:15px;color:var(--muted);position:relative;z-index:1;}
+    .filters{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+    .filter-btn{
+      padding:7px 16px;border-radius:20px;border:1px solid var(--border);
+      background:rgba(255,255,255,0.03);color:var(--muted);
+      font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;
+      transition:all 0.2s;
+    }
+    .filter-btn:hover,.filter-btn.active{
+      background:rgba(255,60,172,0.12);color:var(--neon);
+      border-color:rgba(255,60,172,0.3);
+    }
+    .events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:20px;}
+    .event-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:16px;overflow:hidden;cursor:pointer;
+      transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s;
+      animation:cardIn 0.4s ease both;
+    }
+    .event-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(255,60,172,0.25);
+      box-shadow:0 12px 40px rgba(255,60,172,0.1);
+    }
+    @keyframes cardIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+    .event-banner{
+      height:120px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:52px;position:relative;overflow:hidden;
+    }
+    .event-banner::after{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(to bottom,transparent 60%,var(--surface));
+    }
+    .genre-bg-ELECTRO{background:linear-gradient(135deg,#0a0a2e,#1a0a3e);}
+    .genre-bg-POP{background:linear-gradient(135deg,#2e0a1a,#3e0a2e);}
+    .genre-bg-ROCK{background:linear-gradient(135deg,#1a0a0a,#2e1a0a);}
+    .genre-bg-HIPHOP{background:linear-gradient(135deg,#0a1a0a,#0a2e1a);}
+    .genre-bg-JAZZ{background:linear-gradient(135deg,#1a1a0a,#2e2e0a);}
+    .event-body{padding:16px;}
+    .event-genre{
+      display:inline-block;padding:3px 10px;border-radius:20px;
+      font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .genre-ELECTRO{background:rgba(43,134,197,0.15);color:#7ec8e3;border:1px solid rgba(43,134,197,0.25);}
+    .genre-POP{background:rgba(255,60,172,0.12);color:#ff8cc8;border:1px solid rgba(255,60,172,0.2);}
+    .genre-ROCK{background:rgba(239,71,111,0.12);color:#f98ba5;border:1px solid rgba(239,71,111,0.2);}
+    .genre-HIPHOP{background:rgba(6,214,160,0.1);color:#6ee9cc;border:1px solid rgba(6,214,160,0.2);}
+    .genre-JAZZ{background:rgba(255,209,102,0.1);color:#ffd166;border:1px solid rgba(255,209,102,0.2);}
+    .event-artist{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;line-height:1.1;}
+    .event-title{font-size:13px;color:var(--muted);margin-top:2px;}
+    .event-meta{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;font-size:12px;color:var(--muted);}
+    .meta-item{display:flex;align-items:center;gap:4px;}
+    .event-footer{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-top:14px;padding-top:14px;
+      border-top:1px solid var(--border);
+    }
+    .event-price{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px;}
+    .seats-left{font-size:11px;color:var(--muted);}
+    .seats-critical{color:var(--red) !important;}
+    .book-btn{
+      padding:8px 18px;border:none;border-radius:8px;
+      background:linear-gradient(135deg,var(--neon),var(--neon2));
+      color:white;font-family:'Bebas Neue',sans-serif;
+      font-size:14px;letter-spacing:1px;cursor:pointer;
+      transition:opacity 0.2s,transform 0.15s;
+      box-shadow:0 2px 10px rgba(255,60,172,0.2);
+    }
+    .book-btn:hover{opacity:0.85;transform:translateY(-1px);}
+    .book-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+    .bookings-list{display:flex;flex-direction:column;gap:14px;}
+    .booking-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:14px;padding:20px;
+      display:flex;align-items:center;gap:20px;
+      animation:cardIn 0.3s ease both;
+    }
+    .booking-card.CANCELLED{opacity:0.45;}
+    .ticket-icon{
+      width:56px;height:56px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:26px;flex-shrink:0;
+      background:linear-gradient(135deg,rgba(255,60,172,0.12),rgba(120,75,160,0.12));
+      border:1px solid rgba(255,60,172,0.15);
+    }
+    .booking-info{flex:1;}
+    .booking-artist{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;}
+    .booking-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+    .booking-ref{font-size:11px;color:var(--neon);font-family:'Outfit',monospace;letter-spacing:0.06em;margin-top:4px;}
+    .booking-right{text-align:right;}
+    .booking-price{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);}
+    .status-badge{
+      display:inline-block;padding:3px 10px;border-radius:20px;
+      font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;
+    }
+    .CONFIRMED{background:rgba(6,214,160,0.1);color:var(--green);border:1px solid rgba(6,214,160,0.2);}
+    .CANCELLED{background:rgba(239,71,111,0.1);color:var(--red);border:1px solid rgba(239,71,111,0.2);}
+    .cancel-btn{
+      margin-top:8px;padding:5px 12px;border-radius:7px;border:none;
+      background:rgba(239,71,111,0.08);color:var(--red);
+      font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;
+      transition:background 0.2s;
+    }
+    .cancel-btn:hover{background:rgba(239,71,111,0.15);}
+    .overlay{
+      display:none;position:fixed;inset:0;z-index:200;
+      background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);
+      align-items:center;justify-content:center;
+    }
+    .overlay.open{display:flex;}
+    .modal{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:20px;width:380px;padding:32px;
+      box-shadow:0 0 60px rgba(255,60,172,0.15);
+      animation:modalIn 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes modalIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:none;}}
+    .modal h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;margin-bottom:6px;}
+    .modal-venue{font-size:13px;color:var(--muted);margin-bottom:20px;}
+    .modal-field{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+    .modal-field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+    .qty-control{display:flex;align-items:center;gap:12px;}
+    .qty-btn{
+      width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+      background:rgba(255,255,255,0.04);color:var(--text);
+      font-size:18px;cursor:pointer;transition:background 0.2s;
+    }
+    .qty-btn:hover{background:rgba(255,60,172,0.1);}
+    .qty-val{font-family:'Bebas Neue',sans-serif;font-size:26px;min-width:30px;text-align:center;}
+    .modal-total{
+      background:rgba(255,209,102,0.06);border:1px solid rgba(255,209,102,0.15);
+      border-radius:10px;padding:14px;
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:20px;
+    }
+    .total-label{font-size:12px;color:var(--muted);}
+    .total-val{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);}
+    .modal-confirm{
+      width:100%;padding:13px;border:none;border-radius:10px;
+      background:linear-gradient(135deg,var(--neon),var(--neon2));
+      color:white;font-family:'Bebas Neue',sans-serif;
+      font-size:18px;letter-spacing:2px;cursor:pointer;
+      box-shadow:0 4px 20px rgba(255,60,172,0.25);
+      transition:opacity 0.2s,transform 0.15s;
+    }
+    .modal-confirm:hover{opacity:0.88;transform:translateY(-1px);}
+    .modal-cancel{
+      width:100%;padding:10px;margin-top:8px;border:none;
+      background:rgba(255,255,255,0.04);border-radius:10px;
+      color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;
+    }
+    .toast{
+      position:fixed;bottom:24px;right:24px;z-index:300;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:14px 20px;font-size:13px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);
+      display:none;animation:toastIn 0.3s ease;
+    }
+    .toast.show{display:block;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+    .empty{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-icon{font-size:40px;margin-bottom:10px;opacity:0.4;}
+    .empty-text{font-size:14px;}
+    @media(max-width:680px){
+      .events-grid{grid-template-columns:1fr;}
+      .hero-title{font-size:36px;}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">GIGSPOT</div>
+  <button class="nav-tab active" onclick="showTab('events')" id="tabEvents">🎵 Concerts</button>
+  <button class="nav-tab" onclick="showTab('bookings')" id="tabBookings">🎟️ Mes Billets</button>
+  <div class="nav-user" id="navUser"></div>
+  <button class="logout-btn" onclick="logout()">Sortir</button>
+</nav>
+
+<main>
+  <div id="authWall" style="display:none;text-align:center;padding:80px 20px;">
+    <div style="font-size:48px;margin-bottom:16px;">🎤</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:8px;">ACCÈS RESTREINT</div>
+    <div style="color:var(--muted);margin-bottom:24px;">Connectez-vous pour voir les concerts et réserver</div>
+    <a href="index.html" style="padding:12px 28px;background:linear-gradient(135deg,var(--neon),var(--neon2));border-radius:10px;color:white;text-decoration:none;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;">SE CONNECTER</a>
+  </div>
+
+  <div id="appContent" style="display:none;">
+    <div id="eventsTab">
+      <div class="hero">
+        <div class="hero-title">LES PROCHAINS <span>CONCERTS</span></div>
+        <div class="hero-sub">Réservez vos places avant qu'il ne soit trop tard 🎶</div>
+      </div>
+      <div class="filters" id="filtersBar">
+        <button class="filter-btn active" onclick="filterGenre('ALL', this)">🎵 Tous</button>
+        <button class="filter-btn" onclick="filterGenre('ELECTRO', this)">🎧 Electro</button>
+        <button class="filter-btn" onclick="filterGenre('POP', this)">🌟 Pop</button>
+        <button class="filter-btn" onclick="filterGenre('ROCK', this)">🎸 Rock</button>
+        <button class="filter-btn" onclick="filterGenre('HIPHOP', this)">🎤 Hip-Hop</button>
+        <button class="filter-btn" onclick="filterGenre('JAZZ', this)">🎷 Jazz</button>
+      </div>
+      <div class="events-grid" id="eventsGrid"></div>
+    </div>
+
+    <div id="bookingsTab" style="display:none;">
+      <div style="margin-bottom:24px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;">MES BILLETS</div>
+        <div style="font-size:14px;color:var(--muted);">Vos réservations GigSpot</div>
+      </div>
+      <div class="bookings-list" id="bookingsList"></div>
+    </div>
+  </div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div style="font-size:36px;text-align:center;margin-bottom:12px;" id="modalEmoji"></div>
+    <h2 id="modalArtist"></h2>
+    <div class="modal-venue" id="modalVenue"></div>
+    <div class="modal-field">
+      <label>Nombre de billets</label>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-val" id="qtyVal">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <div class="modal-total">
+      <div>
+        <div class="total-label">Total à payer</div>
+        <div style="font-size:11px;color:var(--muted);" id="modalPriceUnit"></div>
+      </div>
+      <div class="total-val" id="modalTotal"></div>
+    </div>
+    <button class="modal-confirm" onclick="confirmBook()">🎟️ CONFIRMER LA RÉSERVATION</button>
+    <button class="modal-cancel" onclick="closeModal()">Annuler</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const EVENT_API = 'http://127.0.0.1/api/events';
+
+  const token = localStorage.getItem('jwt_token');
+  const username = localStorage.getItem('username') || '';
+  let allEvents = [];
+  let currentEvent = null;
+  let qty = 1;
+
+  function init() {
+    if (!token) { document.getElementById('authWall').style.display='block'; return; }
+    document.getElementById('appContent').style.display='block';
+    document.getElementById('navUser').innerHTML =
+      `<div class="avatar">${username[0]?.toUpperCase()}</div><span>${username}</span>`;
+    loadEvents();
+  }
+
+  function showTab(tab) {
+    document.getElementById('eventsTab').style.display = tab==='events' ? 'block' : 'none';
+    document.getElementById('bookingsTab').style.display = tab==='bookings' ? 'block' : 'none';
+    document.getElementById('tabEvents').classList.toggle('active', tab==='events');
+    document.getElementById('tabBookings').classList.toggle('active', tab==='bookings');
+    if (tab==='bookings') loadBookings();
+  }
+
+  async function loadEvents() {
+    try {
+      const res = await fetch(`${EVENT_API}/events`);
+      allEvents = await res.json();
+      renderEvents(allEvents);
+    } catch { showToast('⚠️ Impossible de charger les concerts. Vérifiez event-service sur ' + EVENT_API); }
+  }
+
+  function filterGenre(genre, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = genre==='ALL' ? allEvents : allEvents.filter(e => e.genre===genre);
+    renderEvents(filtered);
+  }
+
+  function renderEvents(events) {
+    const grid = document.getElementById('eventsGrid');
+    if (!events.length) {
+      grid.innerHTML = `<div class="empty"><div class="empty-icon">🎵</div><div class="empty-text">Aucun concert dans cette catégorie</div></div>`;
+      return;
+    }
+    grid.innerHTML = events.map((ev, i) => `
+      <div class="event-card" style="animation-delay:${i*0.05}s">
+        <div class="event-banner genre-bg-${ev.genre}">
+          <span>${ev.imageUrl}</span>
+        </div>
+        <div class="event-body">
+          <span class="event-genre genre-${ev.genre}">${ev.genre}</span>
+          <div class="event-artist">${ev.artist}</div>
+          <div class="event-title">${ev.title}</div>
+          <div class="event-meta">
+            <span class="meta-item">📅 ${formatDate(ev.date)}</span>
+            <span class="meta-item">🕐 ${ev.time}</span>
+            <span class="meta-item">📍 ${ev.venue}, ${ev.city}</span>
+          </div>
+          <div class="event-footer">
+            <div>
+              <div class="event-price">${ev.price.toFixed(0)}€</div>
+              <div class="seats-left ${ev.availableSeats < 50 ? 'seats-critical' : ''}">
+                ${ev.availableSeats < 50 ? '🔥 ' : ''}${ev.availableSeats} places restantes
+              </div>
+            </div>
+            <button class="book-btn" onclick="openModal(${ev.id})" ${ev.availableSeats===0?'disabled':''}>
+              ${ev.availableSeats===0 ? 'COMPLET' : 'RÉSERVER'}
+            </button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function openModal(eventId) {
+    currentEvent = allEvents.find(e => e.id===eventId);
+    if (!currentEvent) return;
+    qty = 1;
+    document.getElementById('modalEmoji').textContent = currentEvent.imageUrl;
+    document.getElementById('modalArtist').textContent = currentEvent.artist;
+    document.getElementById('modalVenue').textContent = `📍 ${currentEvent.venue}, ${currentEvent.city} · 📅 ${formatDate(currentEvent.date)} ${currentEvent.time}`;
+    document.getElementById('modalPriceUnit').textContent = `${currentEvent.price}€ / billet`;
+    updateModalTotal();
+    document.getElementById('overlay').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+  function changeQty(delta) {
+    qty = Math.max(1, Math.min(10, qty + delta));
+    document.getElementById('qtyVal').textContent = qty;
+    updateModalTotal();
+  }
+
+  function updateModalTotal() {
+    document.getElementById('modalTotal').textContent = (currentEvent.price * qty).toFixed(0) + '€';
+  }
+
+  async function confirmBook() {
+    try {
+      const res = await fetch(`${EVENT_API}/events/${currentEvent.id}/book`, {
+        method:'POST',
+        headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+        body: JSON.stringify({quantity: qty})
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeModal();
+        showToast(`🎟️ ${qty} billet(s) réservé(s) ! Réf: ${data.booking.bookingRef}`);
+        loadEvents();
+      } else {
+        showToast('⚠️ ' + data.message);
+      }
+    } catch { showToast('⚠️ Erreur lors de la réservation'); }
+  }
+
+  async function loadBookings() {
+    try {
+      const res = await fetch(`${EVENT_API}/events/bookings/me`, {
+        headers:{'Authorization':'Bearer '+token}
+      });
+      const bookings = await res.json();
+      renderBookings(bookings);
+    } catch { showToast('⚠️ Impossible de charger vos réservations'); }
+  }
+
+  function renderBookings(bookings) {
+    const list = document.getElementById('bookingsList');
+    if (!bookings.length) {
+      list.innerHTML = `<div class="empty"><div class="empty-icon">🎟️</div><div class="empty-text">Vous n'avez aucune réservation pour le moment</div></div>`;
+      return;
+    }
+    list.innerHTML = bookings.map(b => {
+      const ev = allEvents.find(e => e.id===b.eventId) || {};
+      return `
+        <div class="booking-card ${b.status}">
+          <div class="ticket-icon">${ev.imageUrl || '🎵'}</div>
+          <div class="booking-info">
+            <div class="booking-artist">${ev.artist || 'Concert'}</div>
+            <div class="booking-meta">
+              ${ev.date ? formatDate(ev.date) : ''} · ${ev.venue || ''} · ${b.quantity} billet(s)
+            </div>
+            <div class="booking-ref">${b.bookingRef}</div>
+          </div>
+          <div class="booking-right">
+            <div class="booking-price">${b.totalPrice.toFixed(0)}€</div>
+            <div class="status-badge ${b.status}">${b.status==='CONFIRMED'?'✓ Confirmé':'✗ Annulé'}</div>
+            ${b.status==='CONFIRMED' ? `<br><button class="cancel-btn" onclick="cancelBooking(${b.id})">Annuler</button>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function cancelBooking(bookingId) {
+    try {
+      const res = await fetch(`${EVENT_API}/events/bookings/${bookingId}`, {
+        method:'DELETE', headers:{'Authorization':'Bearer '+token}
+      });
+      const data = await res.json();
+      if (data.success) { showToast('✅ Réservation annulée'); loadBookings(); loadEvents(); }
+      else showToast('⚠️ ' + data.message);
+    } catch { showToast('⚠️ Erreur'); }
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    const [y,m,day] = d.split('-');
+    const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    return `${day} ${months[parseInt(m)-1]} ${y}`;
+  }
+
+  function logout() {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('username');
+    window.location.href = 'index.html';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  document.getElementById('overlay').addEventListener('click', e => {
+    if (e.target===e.currentTarget) closeModal();
+  });
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-db
+  labels:
+    app: event-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-db
+  template:
+    metadata:
+      labels:
+        app: event-db
+    spec:
+      containers:
+        - name: event-db
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "eventdb"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gigspot-secrets
+                  key: db-password
+          volumeMounts:
+            - name: event-db-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: event-db-storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-db
+spec:
+  selector:
+    app: event-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP

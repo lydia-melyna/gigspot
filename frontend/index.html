@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GigSpot — Connexion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#06080f;
+      --card:#0d1117;
+      --border:rgba(255,255,255,0.06);
+      --neon:#ff3cac;
+      --neon2:#784ba0;
+      --neon3:#2b86c5;
+      --gold:#ffd166;
+      --text:#f0f0f0;
+      --muted:#5a6375;
+      --input:rgba(255,255,255,0.04);
+    }
+    body{
+      min-height:100vh;background:var(--bg);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Outfit',sans-serif;color:var(--text);overflow:hidden;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+    }
+    .lights{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+    .light{
+      position:absolute;width:2px;
+      animation:sweep 8s ease-in-out infinite alternate;
+      transform-origin:bottom center;
+    }
+    .light::after{
+      content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+      width:0;height:0;
+      border-left:120px solid transparent;
+      border-right:120px solid transparent;
+    }
+    .l1{bottom:0;left:20%;animation-delay:0s;}
+    .l1::after{border-top:500px solid rgba(255,60,172,0.06);}
+    .l2{bottom:0;left:50%;animation-delay:-2.5s;}
+    .l2::after{border-top:500px solid rgba(43,134,197,0.07);}
+    .l3{bottom:0;left:80%;animation-delay:-5s;}
+    .l3::after{border-top:500px solid rgba(120,75,160,0.07);}
+    @keyframes sweep{
+      from{transform:rotate(-25deg);}
+      to{transform:rotate(25deg);}
+    }
+    .notes{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .note{
+      position:absolute;font-size:20px;opacity:0;
+      animation:floatNote 10s ease-in infinite;
+    }
+    @keyframes floatNote{
+      0%{opacity:0;transform:translateY(0) rotate(0deg);}
+      20%{opacity:0.15;}
+      80%{opacity:0.1;}
+      100%{opacity:0;transform:translateY(-300px) rotate(30deg);}
+    }
+    .card{
+      position:relative;z-index:1;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;width:420px;
+      box-shadow:0 0 60px rgba(255,60,172,0.08),0 0 120px rgba(43,134,197,0.05);
+      overflow:hidden;
+      animation:cardIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes cardIn{
+      from{opacity:0;transform:translateY(40px) scale(0.95);}
+      to{opacity:1;transform:none;}
+    }
+    .banner{
+      height:110px;
+      background:linear-gradient(135deg,#1a0a2e,#16213e,#0f3460);
+      display:flex;align-items:center;justify-content:center;
+      position:relative;overflow:hidden;
+    }
+    .banner::before{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(90deg,transparent,rgba(255,60,172,0.15),transparent);
+      animation:shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer{
+      0%{transform:translateX(-100%);}100%{transform:translateX(100%);}
+    }
+    .banner-text{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:42px;letter-spacing:6px;
+      background:linear-gradient(90deg,var(--neon),var(--gold),var(--neon3));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      position:relative;z-index:1;
+    }
+    .banner-sub{
+      position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+      font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.3);
+      text-transform:uppercase;
+    }
+    .body{padding:32px;}
+    .tabs{
+      display:flex;gap:4px;
+      background:rgba(255,255,255,0.03);
+      border-radius:10px;padding:4px;margin-bottom:28px;
+    }
+    .tab{
+      flex:1;padding:9px;border:none;background:none;
+      border-radius:7px;cursor:pointer;
+      font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+      color:var(--muted);transition:all 0.2s;
+    }
+    .tab.active{
+      background:rgba(255,60,172,0.12);color:var(--neon);
+      box-shadow:0 0 0 1px rgba(255,60,172,0.2);
+    }
+    .form{display:none;flex-direction:column;gap:14px;}
+    .form.active{display:flex;animation:fadeIn 0.3s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+    .field{display:flex;flex-direction:column;gap:5px;}
+    label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+    .input-wrap{position:relative;}
+    .input-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.35;pointer-events:none;}
+    input{
+      width:100%;padding:11px 13px 11px 38px;
+      background:var(--input);
+      border:1px solid var(--border);
+      border-radius:10px;color:var(--text);
+      font-family:'Outfit',sans-serif;font-size:14px;outline:none;
+      transition:border-color 0.2s,box-shadow 0.2s;
+    }
+    input:focus{border-color:rgba(255,60,172,0.4);box-shadow:0 0 0 3px rgba(255,60,172,0.07);}
+    input::placeholder{color:var(--muted);}
+    .btn{
+      padding:13px;margin-top:4px;
+      background:linear-gradient(135deg,var(--neon),var(--neon2),var(--neon3));
+      border:none;border-radius:10px;
+      color:white;font-family:'Bebas Neue',sans-serif;
+      font-size:18px;letter-spacing:2px;cursor:pointer;
+      transition:opacity 0.2s,transform 0.15s,box-shadow 0.2s;
+      box-shadow:0 4px 20px rgba(255,60,172,0.25);
+    }
+    .btn:hover{opacity:0.88;transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,60,172,0.35);}
+    .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+    .loader{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .alert{
+      padding:11px 14px;border-radius:9px;font-size:13px;
+      display:none;align-items:center;gap:8px;
+    }
+    .alert.error{background:rgba(255,60,172,0.08);border:1px solid rgba(255,60,172,0.2);color:#ff8cc8;display:flex;}
+    .alert.success{background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);color:var(--gold);display:flex;}
+    .success-box{
+      display:none;text-align:center;padding:20px;
+      background:rgba(255,60,172,0.05);
+      border:1px solid rgba(255,60,172,0.15);
+      border-radius:12px;margin-top:8px;
+    }
+    .success-icon{font-size:36px;margin-bottom:8px;}
+    .success-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--neon);}
+    .success-msg{font-size:13px;color:var(--muted);margin-top:4px;}
+    .go-btn{
+      display:block;width:100%;margin-top:14px;padding:12px;
+      background:linear-gradient(135deg,var(--gold),#ff9a3c);
+      border:none;border-radius:10px;
+      color:#1a0a00;font-family:'Bebas Neue',sans-serif;
+      font-size:17px;letter-spacing:2px;cursor:pointer;
+      transition:opacity 0.2s,transform 0.15s;
+      box-shadow:0 4px 20px rgba(255,209,102,0.25);
+    }
+    .go-btn:hover{opacity:0.9;transform:translateY(-1px);}
+    .divider{
+      text-align:center;font-size:11px;color:var(--muted);
+      letter-spacing:0.1em;margin:4px 0;text-transform:uppercase;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lights">
+  <div class="light l1"></div>
+  <div class="light l2"></div>
+  <div class="light l3"></div>
+</div>
+<div class="notes" id="notes"></div>
+
+<div class="card">
+  <div class="banner">
+    <div class="banner-text">GIGSPOT</div>
+    <div class="banner-sub">Live Music · Concerts · Événements</div>
+  </div>
+
+  <div class="body">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Connexion</button>
+      <button class="tab" onclick="switchTab('register')">Inscription</button>
+    </div>
+
+    <div class="alert" id="alert"></div>
+
+    <!-- Login -->
+    <form class="form active" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="field">
+        <label>Pseudo</label>
+        <div class="input-wrap">
+          <span class="input-icon">🎤</span>
+          <input type="text" id="lUser" placeholder="votre pseudo" required/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔑</span>
+          <input type="password" id="lPass" placeholder="••••••••" required/>
+        </div>
+      </div>
+      <button type="submit" class="btn" id="lBtn">
+        <span id="lTxt">ENTRER</span>
+        <div class="loader" id="lLoad"></div>
+      </button>
+    </form>
+
+    <!-- Register -->
+    <form class="form" id="registerForm" onsubmit="handleRegister(event)">
+      <div class="field">
+        <label>Pseudo</label>
+        <div class="input-wrap">
+          <span class="input-icon">🎤</span>
+          <input type="text" id="rUser" placeholder="votre pseudo" required/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="rEmail" placeholder="vous@email.com" required/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔑</span>
+          <input type="password" id="rPass" placeholder="8 caractères min." required/>
+        </div>
+      </div>
+      <button type="submit" class="btn" id="rBtn">
+        <span id="rTxt">REJOINDRE</span>
+        <div class="loader" id="rLoad"></div>
+      </button>
+    </form>
+
+    <!-- Success -->
+    <div class="success-box" id="successBox">
+      <div class="success-icon">🎟️</div>
+      <div class="success-title">Accès accordé !</div>
+      <div class="success-msg" id="successMsg">Bienvenue dans la fosse.</div>
+      <button class="go-btn" onclick="goToEvents()">🎵 DÉCOUVRIR LES CONCERTS</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const AUTH_API = 'http://127.0.0.1/api/auth';
+
+  const noteEmojis = ['🎵','🎶','🎸','🥁','🎷','🎺','🎻','🎹'];
+  const notesEl = document.getElementById('notes');
+  for (let i = 0; i < 18; i++) {
+    const n = document.createElement('div');
+    n.className = 'note';
+    n.textContent = noteEmojis[Math.floor(Math.random() * noteEmojis.length)];
+    n.style.left = Math.random() * 100 + '%';
+    n.style.bottom = '-30px';
+    n.style.animationDelay = (Math.random() * 10) + 's';
+    n.style.animationDuration = (8 + Math.random() * 6) + 's';
+    notesEl.appendChild(n);
+  }
+
+  function switchTab(t) {
+    document.querySelectorAll('.tab').forEach((el, i) =>
+      el.classList.toggle('active', (t==='login'&&i===0)||(t==='register'&&i===1)));
+    document.getElementById('loginForm').classList.toggle('active', t==='login');
+    document.getElementById('registerForm').classList.toggle('active', t==='register');
+    document.getElementById('successBox').style.display = 'none';
+    hideAlert();
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('alert');
+    el.textContent = (type==='error'?'⚠️ ':'✅ ') + msg;
+    el.className = 'alert ' + type;
+  }
+  function hideAlert() { document.getElementById('alert').className = 'alert'; }
+
+  function setLoading(btn, load, txt, on) {
+    document.getElementById(btn).disabled = on;
+    document.getElementById(load).style.display = on ? 'block' : 'none';
+    document.getElementById(txt).style.display = on ? 'none' : 'block';
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault(); hideAlert();
+    setLoading('lBtn','lLoad','lTxt',true);
+    try {
+      const res = await fetch(`${AUTH_API}/auth/login`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({username: document.getElementById('lUser').value, password: document.getElementById('lPass').value})
+      });
+      const data = await res.json();
+      if (data.success) { saveAndShow(data); }
+      else showAlert(data.message, 'error');
+    } catch { showAlert('Serveur inaccessible — vérifiez que auth-service tourne sur ' + AUTH_API, 'error'); }
+    setLoading('lBtn','lLoad','lTxt',false);
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault(); hideAlert();
+    setLoading('rBtn','rLoad','rTxt',true);
+    try {
+      const res = await fetch(`${AUTH_API}/auth/register`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({username: document.getElementById('rUser').value, email: document.getElementById('rEmail').value, password: document.getElementById('rPass').value})
+      });
+      const data = await res.json();
+      if (data.success) { saveAndShow(data); }
+      else showAlert(data.message, 'error');
+    } catch { showAlert('Serveur inaccessible.', 'error'); }
+    setLoading('rBtn','rLoad','rTxt',false);
+  }
+
+  function saveAndShow(data) {
+    localStorage.setItem('jwt_token', data.token);
+    localStorage.setItem('username', data.username);
+    document.getElementById('loginForm').classList.remove('active');
+    document.getElementById('registerForm').classList.remove('active');
+    document.getElementById('successMsg').textContent = `Bienvenue ${data.username} 🎶`;
+    document.getElementById('successBox').style.display = 'block';
+  }
+
+  function goToEvents() { window.location.href = 'events.html'; }
+
+  if (localStorage.getItem('jwt_token')) {
+    saveAndShow({username: localStorage.getItem('username')});
+  }
+</script>
+</body>
+</html>

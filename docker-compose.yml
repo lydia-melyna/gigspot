@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+
+  # ─── PostgreSQL for auth-service ─────────────────────────────────────────────
+  auth-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks: [gigspot-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── PostgreSQL for event-service ────────────────────────────────────────────
+  event-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: eventdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - event-db-data:/var/lib/postgresql/data
+    networks: [gigspot-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── Auth Service ─────────────────────────────────────────────────────────────
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      JWT_SECRET: gigspot_secret_key_2025
+      DB_HOST: auth-db
+      DB_PORT: 5432
+      DB_NAME: authdb
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks: [gigspot-net]
+
+  # ─── Event Service ────────────────────────────────────────────────────────────
+  event-service:
+    build: ./event-service
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: 8082
+      JWT_SECRET: gigspot_secret_key_2025
+      DB_HOST: event-db
+      DB_PORT: 5432
+      DB_NAME: eventdb
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      AUTH_SERVICE_URL: http://auth-service:8081
+    depends_on:
+      event-db:
+        condition: service_healthy
+    networks: [gigspot-net]
+
+volumes:
+  auth-db-data:
+  event-db-data:
+
+networks:
+  gigspot-net:
+    driver: bridge
