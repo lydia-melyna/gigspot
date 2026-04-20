@@ -22,3 +22,10 @@ spec:
                 name: event-service
                 port:
                   number: 8082
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

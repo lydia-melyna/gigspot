@@ -15,10 +15,13 @@
       --text:#f0f0f0;--muted:#5a6375;
     }
     body{min-height:100vh;background:var(--bg);font-family:'Outfit',sans-serif;color:var(--text);}
+
+    /* Scanlines overlay */
     body::before{
       content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);
     }
+
     nav{
       height:60px;background:rgba(13,17,23,0.95);backdrop-filter:blur(12px);
       border-bottom:1px solid var(--border);
@@ -49,7 +52,10 @@
       font-family:'Outfit',sans-serif;transition:background 0.2s;
     }
     .logout-btn:hover{background:rgba(239,71,111,0.15);}
+
     main{max-width:1140px;margin:0 auto;padding:36px 20px;position:relative;z-index:1;}
+
+    /* Hero */
     .hero{
       background:linear-gradient(135deg,#1a0a2e 0%,#16213e 50%,#0a0a1a 100%);
       border:1px solid var(--border);border-radius:20px;
@@ -70,6 +76,8 @@
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     }
     .hero-sub{font-size:15px;color:var(--muted);position:relative;z-index:1;}
+
+    /* Filters */
     .filters{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
     .filter-btn{
       padding:7px 16px;border-radius:20px;border:1px solid var(--border);
@@ -81,7 +89,10 @@
       background:rgba(255,60,172,0.12);color:var(--neon);
       border-color:rgba(255,60,172,0.3);
     }
+
+    /* Events grid */
     .events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:20px;}
+
     .event-card{
       background:var(--surface);border:1px solid var(--border);
       border-radius:16px;overflow:hidden;cursor:pointer;
@@ -94,6 +105,7 @@
       box-shadow:0 12px 40px rgba(255,60,172,0.1);
     }
     @keyframes cardIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+
     .event-banner{
       height:120px;
       display:flex;align-items:center;justify-content:center;
@@ -103,11 +115,13 @@
       content:'';position:absolute;inset:0;
       background:linear-gradient(to bottom,transparent 60%,var(--surface));
     }
+
     .genre-bg-ELECTRO{background:linear-gradient(135deg,#0a0a2e,#1a0a3e);}
     .genre-bg-POP{background:linear-gradient(135deg,#2e0a1a,#3e0a2e);}
     .genre-bg-ROCK{background:linear-gradient(135deg,#1a0a0a,#2e1a0a);}
     .genre-bg-HIPHOP{background:linear-gradient(135deg,#0a1a0a,#0a2e1a);}
     .genre-bg-JAZZ{background:linear-gradient(135deg,#1a1a0a,#2e2e0a);}
+
     .event-body{padding:16px;}
     .event-genre{
       display:inline-block;padding:3px 10px;border-radius:20px;
@@ -119,9 +133,13 @@
     .genre-ROCK{background:rgba(239,71,111,0.12);color:#f98ba5;border:1px solid rgba(239,71,111,0.2);}
     .genre-HIPHOP{background:rgba(6,214,160,0.1);color:#6ee9cc;border:1px solid rgba(6,214,160,0.2);}
     .genre-JAZZ{background:rgba(255,209,102,0.1);color:#ffd166;border:1px solid rgba(255,209,102,0.2);}
+
     .event-artist{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;line-height:1.1;}
     .event-title{font-size:13px;color:var(--muted);margin-top:2px;}
-    .event-meta{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;font-size:12px;color:var(--muted);}
+    .event-meta{
+      display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;
+      font-size:12px;color:var(--muted);
+    }
     .meta-item{display:flex;align-items:center;gap:4px;}
     .event-footer{
       display:flex;align-items:center;justify-content:space-between;
@@ -141,6 +159,8 @@
     }
     .book-btn:hover{opacity:0.85;transform:translateY(-1px);}
     .book-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+
+    /* Bookings tab */
     .bookings-list{display:flex;flex-direction:column;gap:14px;}
     .booking-card{
       background:var(--surface);border:1px solid var(--border);
@@ -159,7 +179,10 @@
     .booking-info{flex:1;}
     .booking-artist{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;}
     .booking-meta{font-size:12px;color:var(--muted);margin-top:3px;}
-    .booking-ref{font-size:11px;color:var(--neon);font-family:'Outfit',monospace;letter-spacing:0.06em;margin-top:4px;}
+    .booking-ref{
+      font-size:11px;color:var(--neon);
+      font-family:'Outfit',monospace;letter-spacing:0.06em;margin-top:4px;
+    }
     .booking-right{text-align:right;}
     .booking-price{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);}
     .status-badge{
@@ -175,6 +198,8 @@
       transition:background 0.2s;
     }
     .cancel-btn:hover{background:rgba(239,71,111,0.15);}
+
+    /* Booking modal */
     .overlay{
       display:none;position:fixed;inset:0;z-index:200;
       background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);
@@ -222,6 +247,8 @@
       background:rgba(255,255,255,0.04);border-radius:10px;
       color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;
     }
+
+    /* Toast */
     .toast{
       position:fixed;bottom:24px;right:24px;z-index:300;
       background:var(--surface);border:1px solid var(--border);
@@ -231,9 +258,11 @@
     }
     .toast.show{display:block;}
     @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
     .empty{text-align:center;padding:60px 20px;color:var(--muted);}
     .empty-icon{font-size:40px;margin-bottom:10px;opacity:0.4;}
     .empty-text{font-size:14px;}
+
     @media(max-width:680px){
       .events-grid{grid-template-columns:1fr;}
       .hero-title{font-size:36px;}
@@ -251,6 +280,7 @@
 </nav>
 
 <main>
+  <!-- Auth wall -->
   <div id="authWall" style="display:none;text-align:center;padding:80px 20px;">
     <div style="font-size:48px;margin-bottom:16px;">🎤</div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:8px;">ACCÈS RESTREINT</div>
@@ -259,11 +289,14 @@
   </div>
 
   <div id="appContent" style="display:none;">
+
+    <!-- Events tab -->
     <div id="eventsTab">
       <div class="hero">
         <div class="hero-title">LES PROCHAINS <span>CONCERTS</span></div>
         <div class="hero-sub">Réservez vos places avant qu'il ne soit trop tard 🎶</div>
       </div>
+
       <div class="filters" id="filtersBar">
         <button class="filter-btn active" onclick="filterGenre('ALL', this)">🎵 Tous</button>
         <button class="filter-btn" onclick="filterGenre('ELECTRO', this)">🎧 Electro</button>
@@ -272,9 +305,11 @@
         <button class="filter-btn" onclick="filterGenre('HIPHOP', this)">🎤 Hip-Hop</button>
         <button class="filter-btn" onclick="filterGenre('JAZZ', this)">🎷 Jazz</button>
       </div>
+
       <div class="events-grid" id="eventsGrid"></div>
     </div>
 
+    <!-- Bookings tab -->
     <div id="bookingsTab" style="display:none;">
       <div style="margin-bottom:24px;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;">MES BILLETS</div>
@@ -282,9 +317,11 @@
       </div>
       <div class="bookings-list" id="bookingsList"></div>
     </div>
+
   </div>
 </main>
 
+<!-- Booking modal -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div style="font-size:36px;text-align:center;margin-bottom:12px;" id="modalEmoji"></div>
@@ -313,10 +350,13 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const EVENT_API = 'http://127.0.0.1/api/events';
+  // ⚙️ CONFIG
+  const EVENT_API = '/api/events';
+  // const EVENT_API = 'http://<MINIKUBE_IP>/api/events'; // Kubernetes
 
   const token = localStorage.getItem('jwt_token');
   const username = localStorage.getItem('username') || '';
+
   let allEvents = [];
   let currentEvent = null;
   let qty = 1;
@@ -496,6 +536,7 @@
     setTimeout(() => t.classList.remove('show'), 3500);
   }
 
+  // Close modal on overlay click
   document.getElementById('overlay').addEventListener('click', e => {
     if (e.target===e.currentTarget) closeModal();
   });

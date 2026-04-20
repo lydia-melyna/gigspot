@@ -24,10 +24,14 @@
       display:flex;align-items:center;justify-content:center;
       font-family:'Outfit',sans-serif;color:var(--text);overflow:hidden;
     }
+
+    /* Animated scanlines + noise */
     body::before{
       content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
     }
+
+    /* Neon stage lights */
     .lights{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
     .light{
       position:absolute;width:2px;
@@ -50,6 +54,8 @@
       from{transform:rotate(-25deg);}
       to{transform:rotate(25deg);}
     }
+
+    /* Floating music notes */
     .notes{position:fixed;inset:0;z-index:0;pointer-events:none;}
     .note{
       position:absolute;font-size:20px;opacity:0;
@@ -61,6 +67,7 @@
       80%{opacity:0.1;}
       100%{opacity:0;transform:translateY(-300px) rotate(30deg);}
     }
+
     .card{
       position:relative;z-index:1;
       background:var(--card);
@@ -74,6 +81,8 @@
       from{opacity:0;transform:translateY(40px) scale(0.95);}
       to{opacity:1;transform:none;}
     }
+
+    /* Top banner */
     .banner{
       height:110px;
       background:linear-gradient(135deg,#1a0a2e,#16213e,#0f3460);
@@ -100,7 +109,10 @@
       font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.3);
       text-transform:uppercase;
     }
+
     .body{padding:32px;}
+
+    /* Tabs */
     .tabs{
       display:flex;gap:4px;
       background:rgba(255,255,255,0.03);
@@ -116,9 +128,11 @@
       background:rgba(255,60,172,0.12);color:var(--neon);
       box-shadow:0 0 0 1px rgba(255,60,172,0.2);
     }
+
     .form{display:none;flex-direction:column;gap:14px;}
     .form.active{display:flex;animation:fadeIn 0.3s ease;}
     @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
     .field{display:flex;flex-direction:column;gap:5px;}
     label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
     .input-wrap{position:relative;}
@@ -133,6 +147,7 @@
     }
     input:focus{border-color:rgba(255,60,172,0.4);box-shadow:0 0 0 3px rgba(255,60,172,0.07);}
     input::placeholder{color:var(--muted);}
+
     .btn{
       padding:13px;margin-top:4px;
       background:linear-gradient(135deg,var(--neon),var(--neon2),var(--neon3));
@@ -144,14 +159,17 @@
     }
     .btn:hover{opacity:0.88;transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,60,172,0.35);}
     .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+
     .loader{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
     @keyframes spin{to{transform:rotate(360deg);}}
+
     .alert{
       padding:11px 14px;border-radius:9px;font-size:13px;
       display:none;align-items:center;gap:8px;
     }
     .alert.error{background:rgba(255,60,172,0.08);border:1px solid rgba(255,60,172,0.2);color:#ff8cc8;display:flex;}
     .alert.success{background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);color:var(--gold);display:flex;}
+
     .success-box{
       display:none;text-align:center;padding:20px;
       background:rgba(255,60,172,0.05);
@@ -161,6 +179,7 @@
     .success-icon{font-size:36px;margin-bottom:8px;}
     .success-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--neon);}
     .success-msg{font-size:13px;color:var(--muted);margin-top:4px;}
+
     .go-btn{
       display:block;width:100%;margin-top:14px;padding:12px;
       background:linear-gradient(135deg,var(--gold),#ff9a3c);
@@ -171,6 +190,7 @@
       box-shadow:0 4px 20px rgba(255,209,102,0.25);
     }
     .go-btn:hover{opacity:0.9;transform:translateY(-1px);}
+
     .divider{
       text-align:center;font-size:11px;color:var(--muted);
       letter-spacing:0.1em;margin:4px 0;text-transform:uppercase;
@@ -262,8 +282,11 @@
 </div>
 
 <script>
-  const AUTH_API = 'http://127.0.0.1/api/auth';
+  // ⚙️ CONFIG — changer selon environnement
+  const AUTH_API = '/api/auth';
+  // const AUTH_API = 'http://<MINIKUBE_IP>/api/auth'; // Kubernetes
 
+  // Floating notes
   const noteEmojis = ['🎵','🎶','🎸','🥁','🎷','🎺','🎻','🎹'];
   const notesEl = document.getElementById('notes');
   for (let i = 0; i < 18; i++) {
