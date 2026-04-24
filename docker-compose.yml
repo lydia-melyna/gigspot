@@ -1,8 +1,5 @@
-version: '3.8'
-
 services:
 
-  # ─── PostgreSQL for auth-service ─────────────────────────────────────────────
   auth-db:
     image: postgres:16-alpine
     environment:
@@ -18,7 +15,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ─── PostgreSQL for event-service ────────────────────────────────────────────
   event-db:
     image: postgres:16-alpine
     environment:
@@ -34,9 +30,8 @@ services:
       timeout: 5s
       retries: 5
 
-  # ─── Auth Service ─────────────────────────────────────────────────────────────
   auth-service:
-    build: ./auth-service
+    image: pumpkinlyd/gigspot-auth:latest
     ports:
       - "8081:8081"
     environment:
@@ -52,9 +47,8 @@ services:
         condition: service_healthy
     networks: [gigspot-net]
 
-  # ─── Event Service ────────────────────────────────────────────────────────────
   event-service:
-    build: ./event-service
+    image: pumpkinlyd/gigspot-event:latest
     ports:
       - "8082:8082"
     environment:
@@ -69,6 +63,15 @@ services:
     depends_on:
       event-db:
         condition: service_healthy
+    networks: [gigspot-net]
+
+  frontend:
+    image: pumpkinlyd/gigspot-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - event-service
     networks: [gigspot-net]
 
 volumes:
